@@ -1,0 +1,49 @@
+html {
+  align-self: start;
+  text-align: left;
+  background-color: black;
+  padding: 2rem;
+  padding-top: 0;
+}
+
+.App {
+  background-color: black;
+}
+
+h1 {
+  color: lightgray;
+}
+
+h2 {
+  color: mediumseagreen;
+}
+
+ul {
+  list-style-type: decimal;
+  user-select: none;
+}
+
+li.joke {
+  color: white;
+  font-weight: 300;
+  background-color: blueviolet;
+  padding: 0.4rem;
+  margin: 0.35rem;
+  cursor: pointer;
+  min-height: 2.2rem;
+  border-radius: 0.25rem;
+  box-shadow: inset 1px 1px 1px 1px rgba(255, 255, 255, 0.46), inset -1px -1px 1px 1px rgba(0, 0, 0, 0.26);
+}
+
+li.favorite {
+  background-color: seagreen;
+  font-weight: 300;
+}
+
+li.favorite:hover {
+  background-color: grey;
+}
+
+li:hover {
+  background-color: seagreen;
+}
