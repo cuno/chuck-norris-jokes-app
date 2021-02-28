@@ -57,9 +57,10 @@ const jokeReducer = (state: State, action: Action): State => {
     }
     case ActionKind.AddJokes: {
       const newJokes = action.payload as Joke[]
+      const allJokes = [...state.jokes, ...newJokes]
       return {
         ...state,
-        jokes: [...state.jokes, ...newJokes]
+        jokes: allJokes.length <= 10 ? allJokes : state.jokes
       }
     }
     case ActionKind.FavoriteJoke: {

@@ -1,11 +1,15 @@
 import { useEffect, useReducer } from 'react'
 import './ChuckNorrisApp.css'
-import { TEN_RANDOM_JOKES_URL } from './constants'
-import { initialState, initJokes, jokeReducer } from './store'
+import { RANDOM_JOKE_URL, TEN_RANDOM_JOKES_URL } from './constants'
+import { addJokes, initialState, initJokes, Joke, jokeReducer } from './store'
 import JokeList from './JokeList'
+import { take } from 'rxjs/operators'
+import { interval } from 'rxjs'
 
 const localStorage = window.localStorage
 
+const isFullList = (jokes: Joke[]) => jokes && jokes.length >= 10
+const ticker$ = interval(5000).pipe(take(10))
 const fetchHelper = (url: string, onSuccess: (json: any) => void) => {
   fetch(url)
     .then((res) => res.json())
@@ -29,6 +33,10 @@ export const apiToAppJoke = (item: { id: number; joke: string }) => ({ id: item.
 const ChuckNorrisApp = ({ disableLocalStorage = true }) => {
   const [state, dispatch] = useReducer(jokeReducer, initialState)
 
+  // Dispatch on interval.
+  const addOnInterval = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>
+    ticker$.subscribe((n) => fetchHelper(RANDOM_JOKE_URL, (json) => dispatch(addJokes(json.value && json.value.map(apiToAppJoke)))))
+
   // Get jokes from local storage or the API.
   useEffect(() => {
     const storedJokesString = localStorage.getItem('favoriteJokes')
@@ -38,7 +46,7 @@ const ChuckNorrisApp = ({ disableLocalStorage = true }) => {
       dispatch(initJokes(storedJokes))
     } else {
       console.debug('Fetching jokes from the API')
-      fetchHelper(TEN_RANDOM_JOKES_URL, (json) => dispatch(initJokes(json.value.map(apiToAppJoke))))
+      fetchHelper(TEN_RANDOM_JOKES_URL, (json) => dispatch(initJokes(json.value && json.value.map(apiToAppJoke))))
     }
   }, [disableLocalStorage])
 
@@ -59,6 +67,11 @@ const ChuckNorrisApp = ({ disableLocalStorage = true }) => {
       >
         Fetch 10 random jokes
       </button>
+      <button disabled={isFullList(state.jokes)} onClick={addOnInterval}>
+        Add 10 jokes on interval
+      </button>
+      <button onClick={(json) => dispatch(initJokes([].map(apiToAppJoke)))}>Clear</button>
+
       <JokeList dispatch={dispatch} jokes={state.jokes} />
     </div>
   )
