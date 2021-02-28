@@ -12,8 +12,8 @@ type State = {
 
 enum ActionKind {
   AddJokes = 'ADD_JOKES',
-  FavoriteJoke = 'FAV_JOKE',
-  UnFavoriteJoke = 'UN_FAV_JOKE'
+  InitJokes = 'INIT_JOKES',
+  FavoriteJoke = 'FAV_JOKE'
 }
 
 type Action =
@@ -29,10 +29,14 @@ const initialState: State = {
 
 // Action creators.
 
-const addJokes = (newJokes: Array<Joke>) => ({
-  type: ActionKind.AddJokes,
+const addOrInitJokes = (initial: boolean) => (newJokes: Array<Joke>) => ({
+  type: initial ? ActionKind.InitJokes : ActionKind.AddJokes,
   payload: newJokes
 })
+
+const addJokes = addOrInitJokes(false)
+
+const initJokes = addOrInitJokes(true)
 
 const setFavoriteAction = (id: number, flag: boolean) => ({
   type: ActionKind.FavoriteJoke,
@@ -44,6 +48,13 @@ const setFavoriteAction = (id: number, flag: boolean) => ({
 
 const jokeReducer = (state: State, action: Action): State => {
   switch (action.type) {
+    case ActionKind.InitJokes: {
+      const newJokes = action.payload as Joke[]
+      return {
+        ...state,
+        jokes: newJokes
+      }
+    }
     case ActionKind.AddJokes: {
       const newJokes = action.payload as Joke[]
       return {
@@ -63,4 +74,4 @@ const jokeReducer = (state: State, action: Action): State => {
   }
 }
 
-export { addJokes, setFavoriteAction, jokeReducer, initialState }
+export { initJokes, addJokes, setFavoriteAction, jokeReducer, initialState }
