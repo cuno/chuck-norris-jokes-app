@@ -1,5 +1,7 @@
 // Types and initial state.
 
+import { MAX_JOKES_LIST_LENGTH } from './constants'
+
 export type Joke = {
   id: number
   text: string
@@ -60,7 +62,7 @@ const jokeReducer = (state: State, action: Action): State => {
       const allJokes = [...state.jokes, ...newJokes]
       return {
         ...state,
-        jokes: allJokes.length <= 10 ? allJokes : state.jokes
+        jokes: allJokes.length <= MAX_JOKES_LIST_LENGTH ? allJokes : state.jokes
       }
     }
     case ActionKind.FavoriteJoke: {

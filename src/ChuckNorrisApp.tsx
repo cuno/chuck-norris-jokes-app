@@ -1,6 +1,6 @@
 import { useEffect, useReducer } from 'react'
 import './ChuckNorrisApp.css'
-import { RANDOM_JOKE_URL, TEN_RANDOM_JOKES_URL } from './constants'
+import { MAX_JOKES_LIST_LENGTH, RANDOM_JOKE_URL, TEN_RANDOM_JOKES_URL } from './constants'
 import { addJokes, initialState, initJokes, jokeReducer } from './store'
 import JokeList from './JokeList'
 import { take } from 'rxjs/operators'
@@ -8,7 +8,7 @@ import { interval } from 'rxjs'
 import { apiToAppJoke, fetchHelper, isFullList } from './helpers'
 
 const localStorage = window.localStorage
-const ticker$ = interval(5000).pipe(take(10))
+const ticker$ = interval(5000).pipe(take(MAX_JOKES_LIST_LENGTH))
 
 const ChuckNorrisApp = ({ disableLocalStorage = true }) => {
   const [state, dispatch] = useReducer(jokeReducer, initialState)
@@ -45,10 +45,10 @@ const ChuckNorrisApp = ({ disableLocalStorage = true }) => {
           fetchHelper(TEN_RANDOM_JOKES_URL, (json) => dispatch(initJokes(json.value && json.value.map(apiToAppJoke))))
         }}
       >
-        Fetch 10 random jokes
+        Fetch {MAX_JOKES_LIST_LENGTH} random jokes
       </button>
       <button disabled={isFullList(state.jokes)} onClick={addOnInterval}>
-        Add 10 jokes on interval
+        Add {MAX_JOKES_LIST_LENGTH} jokes on interval
       </button>
       <button onClick={(json) => dispatch(initJokes([].map(apiToAppJoke)))}>Clear</button>
 

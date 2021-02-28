@@ -1,6 +1,7 @@
+import { MAX_JOKES_LIST_LENGTH } from './constants'
 import { Joke } from './store'
 
-export const isFullList = (jokes: Joke[]) => jokes && jokes.length >= 10
+export const isFullList = (jokes: Joke[]) => jokes && jokes.length >= MAX_JOKES_LIST_LENGTH
 export const apiToAppJoke = (item: { id: number; joke: string }) => ({ id: item.id, text: item.joke })
 export const fetchHelper = (url: string, onSuccess: (json: any) => void) => {
   fetch(url)
