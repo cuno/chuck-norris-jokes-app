@@ -1,34 +1,14 @@
 import { useEffect, useReducer } from 'react'
 import './ChuckNorrisApp.css'
 import { RANDOM_JOKE_URL, TEN_RANDOM_JOKES_URL } from './constants'
-import { addJokes, initialState, initJokes, Joke, jokeReducer } from './store'
+import { addJokes, initialState, initJokes, jokeReducer } from './store'
 import JokeList from './JokeList'
 import { take } from 'rxjs/operators'
 import { interval } from 'rxjs'
+import { apiToAppJoke, fetchHelper, isFullList } from './helpers'
 
 const localStorage = window.localStorage
-
-const isFullList = (jokes: Joke[]) => jokes && jokes.length >= 10
 const ticker$ = interval(5000).pipe(take(10))
-const fetchHelper = (url: string, onSuccess: (json: any) => void) => {
-  fetch(url)
-    .then((res) => res.json())
-    .then(
-      (json) => {
-        if (json.type === 'success') {
-          console.debug('JSON response', json)
-          onSuccess(json)
-        } else {
-          console.error(`Server: ${json.type}`)
-        }
-      },
-      (error) => {
-        console.error(error)
-      }
-    )
-}
-
-export const apiToAppJoke = (item: { id: number; joke: string }) => ({ id: item.id, text: item.joke })
 
 const ChuckNorrisApp = ({ disableLocalStorage = true }) => {
   const [state, dispatch] = useReducer(jokeReducer, initialState)
