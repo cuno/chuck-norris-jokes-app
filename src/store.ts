@@ -1,6 +1,6 @@
 // Types and initial state.
 
-type Joke = {
+export type Joke = {
   id: number
   text: string
   favorite?: boolean
@@ -16,7 +16,7 @@ enum ActionKind {
   FavoriteJoke = 'FAV_JOKE'
 }
 
-type Action =
+export type Action =
   | {
       type: ActionKind
       payload: Array<Joke>

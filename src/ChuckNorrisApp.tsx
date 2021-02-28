@@ -1,7 +1,8 @@
 import { useEffect, useReducer } from 'react'
 import './ChuckNorrisApp.css'
 import { TEN_RANDOM_JOKES_URL } from './constants'
-import { initialState, initJokes, jokeReducer, setFavoriteAction } from './store'
+import { initialState, initJokes, jokeReducer } from './store'
+import JokeList from './JokeList'
 
 const localStorage = window.localStorage
 
@@ -49,31 +50,17 @@ const ChuckNorrisApp = () => {
 
   return (
     <div className="App">
-      <h1>Chuck Norris Jokes</h1>
-      <ul>
-        {state.jokes.map((joke) => (
-          <li
-            key={joke.id}
-            className={`joke${joke.favorite ? ' favorite' : ''}`}
-            dangerouslySetInnerHTML={{ __html: joke.text }}
-            onClick={() => dispatch(setFavoriteAction(joke.id, true))}
-          />
-        ))}
-      </ul>
-
-      <h2>Favorites</h2>
-      <ul>
-        {state.jokes
-          .filter((joke) => joke.favorite)
-          .map((joke) => (
-            <li
-              key={joke.id}
-              className="joke favorite"
-              dangerouslySetInnerHTML={{ __html: joke.text }}
-              onClick={() => dispatch(setFavoriteAction(joke.id, false))}
-            />
-          ))}
-      </ul>
+      <button onClick={() => localStorage.clear()}>Clear local storage</button>
+      <button
+        onClick={() => {
+          fetchHelper(TEN_RANDOM_JOKES_URL, (json) =>
+            dispatch(initJokes(json.value.map((item: { id: number; joke: string }) => ({ id: item.id, text: item.joke }))))
+          )
+        }}
+      >
+        Fetch 10 random jokes
+      </button>
+      <JokeList dispatch={dispatch} jokes={state.jokes} />
     </div>
   )
 }
