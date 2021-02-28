@@ -3,7 +3,7 @@
 import { MAX_JOKES_LIST_LENGTH } from './constants'
 
 export type Joke = {
-  id: number
+  id: string
   text: string
   favorite?: boolean
 }
@@ -23,7 +23,7 @@ export type Action =
       type: ActionKind
       payload: Array<Joke>
     }
-  | { type: ActionKind; payload: { id: number; flag: boolean } }
+  | { type: ActionKind; payload: { id: string; flag: boolean } }
 
 const initialState: State = {
   jokes: []
@@ -40,7 +40,7 @@ const addJokes = addOrInitJokes(false)
 
 const initJokes = addOrInitJokes(true)
 
-const setFavoriteAction = (id: number, flag: boolean) => ({
+const setFavoriteAction = (id: string, flag: boolean) => ({
   type: ActionKind.FavoriteJoke,
   payload: { id, flag }
 })
@@ -66,7 +66,7 @@ const jokeReducer = (state: State, action: Action): State => {
       }
     }
     case ActionKind.FavoriteJoke: {
-      const { id, flag } = action.payload as { id: number; flag: boolean }
+      const { id, flag } = action.payload as { id: string; flag: boolean }
       return {
         ...state,
         jokes: state.jokes.map((joke) => (joke.id === id ? { ...joke, favorite: flag } : joke))

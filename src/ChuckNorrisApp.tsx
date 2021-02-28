@@ -1,14 +1,14 @@
 import { useEffect, useReducer } from 'react'
 import './ChuckNorrisApp.css'
-import { MAX_JOKES_LIST_LENGTH, RANDOM_JOKE_URL, TEN_RANDOM_JOKES_URL } from './constants'
-import { addJokes, initialState, initJokes, jokeReducer } from './store'
+import { RANDOM_JOKE_URL, TEN_RANDOM_JOKES_URL } from './constants'
+import { addJokes, initialState, initJokes, Joke, jokeReducer } from './store'
 import JokeList from './JokeList'
 import { take } from 'rxjs/operators'
 import { interval } from 'rxjs'
 import { apiToAppJoke, fetchHelper, isFullList } from './helpers'
 
 const localStorage = window.localStorage
-const ticker$ = interval(5000).pipe(take(MAX_JOKES_LIST_LENGTH))
+const ticker$ = interval(5000).pipe(take(10))
 
 const ChuckNorrisApp = ({ disableLocalStorage = true }) => {
   const [state, dispatch] = useReducer(jokeReducer, initialState)
@@ -20,7 +20,7 @@ const ChuckNorrisApp = ({ disableLocalStorage = true }) => {
   // Get jokes from local storage or the API.
   useEffect(() => {
     const storedJokesString = localStorage.getItem('favoriteJokes')
-    const storedJokes: Array<{ id: number; text: string }> = JSON.parse(storedJokesString ? storedJokesString : '[]')
+    const storedJokes: Joke[] = JSON.parse(storedJokesString ? storedJokesString : '[]')
     if (!disableLocalStorage && storedJokes.length > 0) {
       console.debug('Fetching jokes from local storage')
       dispatch(initJokes(storedJokes))
@@ -45,10 +45,10 @@ const ChuckNorrisApp = ({ disableLocalStorage = true }) => {
           fetchHelper(TEN_RANDOM_JOKES_URL, (json) => dispatch(initJokes(json.value && json.value.map(apiToAppJoke))))
         }}
       >
-        Fetch {MAX_JOKES_LIST_LENGTH} random jokes
+        Fetch 10 random jokes
       </button>
       <button disabled={isFullList(state.jokes)} onClick={addOnInterval}>
-        Add {MAX_JOKES_LIST_LENGTH} jokes on interval
+        Add 10 jokes on interval
       </button>
       <button onClick={(json) => dispatch(initJokes([].map(apiToAppJoke)))}>Clear</button>
 
