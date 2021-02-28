@@ -12,34 +12,35 @@ const fetchHelper = (url: string, onSuccess: (json: any) => void) => {
     .then(
       (json) => {
         if (json.type === 'success') {
+          console.debug('JSON response', json)
           onSuccess(json)
         } else {
-          alert(`Server: ${json.type}`)
+          console.error(`Server: ${json.type}`)
         }
       },
       (error) => {
-        alert(error)
+        console.error(error)
       }
     )
 }
 
-const ChuckNorrisApp = () => {
+export const apiToAppJoke = (item: { id: number; joke: string }) => ({ id: item.id, text: item.joke })
+
+const ChuckNorrisApp = ({ disableLocalStorage = true }) => {
   const [state, dispatch] = useReducer(jokeReducer, initialState)
 
   // Get jokes from local storage or the API.
   useEffect(() => {
     const storedJokesString = localStorage.getItem('favoriteJokes')
     const storedJokes: Array<{ id: number; text: string }> = JSON.parse(storedJokesString ? storedJokesString : '[]')
-    if (storedJokes.length > 0) {
+    if (!disableLocalStorage && storedJokes.length > 0) {
       console.debug('Fetching jokes from local storage')
       dispatch(initJokes(storedJokes))
     } else {
       console.debug('Fetching jokes from the API')
-      fetchHelper(TEN_RANDOM_JOKES_URL, (json) =>
-        dispatch(initJokes(json.value.map((item: { id: number; joke: string }) => ({ id: item.id, text: item.joke }))))
-      )
+      fetchHelper(TEN_RANDOM_JOKES_URL, (json) => dispatch(initJokes(json.value.map(apiToAppJoke))))
     }
-  }, [])
+  }, [disableLocalStorage])
 
   useEffect(() => {
     if (state.jokes && state.jokes.length > 0) {
@@ -53,9 +54,7 @@ const ChuckNorrisApp = () => {
       <button onClick={() => localStorage.clear()}>Clear local storage</button>
       <button
         onClick={() => {
-          fetchHelper(TEN_RANDOM_JOKES_URL, (json) =>
-            dispatch(initJokes(json.value.map((item: { id: number; joke: string }) => ({ id: item.id, text: item.joke }))))
-          )
+          fetchHelper(TEN_RANDOM_JOKES_URL, (json) => dispatch(initJokes(json.value && json.value.map(apiToAppJoke))))
         }}
       >
         Fetch 10 random jokes

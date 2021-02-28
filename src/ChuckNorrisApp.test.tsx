@@ -1,33 +1,44 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
+import * as apiJokes from './mockjokes.json'
 import ChuckNorrisApp from './ChuckNorrisApp'
+import fetch from 'jest-fetch-mock'
 
-test('renders no favorite jokes initially', () => {
-  render(<ChuckNorrisApp />)
-  const linkElement = screen.getByText(/learn react/i)
-  expect(linkElement).toBeInTheDocument()
+beforeEach(() => {
+  fetch.resetMocks()
 })
 
-test('renders 10 jokes initially', () => {
+test('initially renders 10 non-favorite jokes', async () => {
+  fetch.mockResponseOnce(JSON.stringify(apiJokes))
   render(<ChuckNorrisApp />)
-  const linkElement = screen.getByText(/learn react/i)
-  expect(linkElement).toBeInTheDocument()
+
+  expect(await screen.findAllByTestId('non-favorite')).toHaveLength(10)
 })
 
-test('checking a favorite checkbox moves a joke to the favorites list', () => {
+test('the fetch button renders 10 non-favorite jokes', async () => {
+  fetch.mockResponseOnce(JSON.stringify({ type: 'success', value: [] }))
   render(<ChuckNorrisApp />)
-  const linkElement = screen.getByText(/learn react/i)
-  expect(linkElement).toBeInTheDocument()
+
+  // Get past the initial request, the jokes list should be empty.
+  expect(await screen.findByText('NO DATA')).toBeInTheDocument()
+
+  // And trigger another request.
+  fetch.mockResponseOnce(JSON.stringify(apiJokes))
+  fireEvent.click(screen.getByText('Fetch 10 random jokes'))
+
+  expect(await screen.findAllByTestId('non-favorite')).toHaveLength(10)
 })
 
-test('unchecking a favorite checkbox moves a joke back to the base list', () => {
+test('clicking a non-favorite joke in the main list puts it in the favorites list', async () => {
+  fetch.mockResponseOnce(JSON.stringify(apiJokes))
   render(<ChuckNorrisApp />)
-  const linkElement = screen.getByText(/learn react/i)
-  expect(linkElement).toBeInTheDocument()
-})
 
-test('checking a favorite checkbox does not changes the total checked count when 10 jokes are checked', () => {
-  render(<ChuckNorrisApp />)
-  const linkElement = screen.getByText(/learn react/i)
-  expect(linkElement).toBeInTheDocument()
+  expect((await screen.findByTestId('jokes-list')).children).toHaveLength(10)
+
+  fireEvent.click(screen.getByText(/^count from one to ten/i))
+  fireEvent.click(screen.getByText(/^A high tide means Chuck Norris is flying/))
+  fireEvent.click(screen.getByText(/^Chuck Norris can drink an entire gallon/))
+
+  expect(await screen.findAllByTestId('non-favorite')).toHaveLength(7)
+  expect((await screen.findByTestId('favorite-jokes-list')).children).toHaveLength(3)
 })

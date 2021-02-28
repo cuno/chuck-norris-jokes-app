@@ -1,0 +1,31 @@
+{
+  "type": "success",
+  "value": [
+    {
+      "id": 419,
+      "joke": "Count from one to ten. That's how long it would take Chuck Norris to kill you...Forty seven times.",
+      "categories": []
+    },
+    { "id": 509, "joke": "Chuck Norris's OSI network model has only one layer - Physical.", "categories": ["nerdy"] },
+    { "id": 109, "joke": "It takes Chuck Norris 20 minutes to watch 60 Minutes.", "categories": [] },
+    {
+      "id": 128,
+      "joke": "A high tide means Chuck Norris is flying over your coast. The tide is caused by God pissing his pants.",
+      "categories": []
+    },
+    { "id": 154, "joke": "Movie trivia: The movie &quot;Invasion U.S.A.&quot; is, in fact, a documentary.", "categories": [] },
+    {
+      "id": 239,
+      "joke": "Chuck Norris's version of a &quot;chocolate milkshake&quot; is a raw porterhouse wrapped around ten Hershey bars, and doused in diesel fuel.",
+      "categories": []
+    },
+    {
+      "id": 354,
+      "joke": "For undercover police work, Chuck Norris pins his badge underneath his shirt, directly into his chest.",
+      "categories": []
+    },
+    { "id": 468, "joke": "Chuck Norris's beard can type 140 wpm.", "categories": ["nerdy"] },
+    { "id": 105, "joke": "Chuck Norris can drink an entire gallon of milk in thirty-seven seconds.", "categories": [] },
+    { "id": 151, "joke": "Chuck Norris doesn't step on toes. Chuck Norris steps on necks.", "categories": [] }
+  ]
+}
