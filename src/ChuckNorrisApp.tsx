@@ -1,9 +1,26 @@
 import { useEffect, useReducer } from 'react'
 import './ChuckNorrisApp.css'
 import { TEN_RANDOM_JOKES_URL } from './constants'
-import { addJokes, initialState, initJokes, jokeReducer, setFavoriteAction } from './store'
+import { initialState, initJokes, jokeReducer, setFavoriteAction } from './store'
 
 const localStorage = window.localStorage
+
+const fetchHelper = (url: string, onSuccess: (json: any) => void) => {
+  fetch(url)
+    .then((res) => res.json())
+    .then(
+      (json) => {
+        if (json.type === 'success') {
+          onSuccess(json)
+        } else {
+          alert(`Server: ${json.type}`)
+        }
+      },
+      (error) => {
+        alert(error)
+      }
+    )
+}
 
 const ChuckNorrisApp = () => {
   const [state, dispatch] = useReducer(jokeReducer, initialState)
@@ -17,20 +34,9 @@ const ChuckNorrisApp = () => {
       dispatch(initJokes(storedJokes))
     } else {
       console.debug('Fetching jokes from the API')
-      fetch(TEN_RANDOM_JOKES_URL)
-        .then((res) => res.json())
-        .then(
-          (json) => {
-            if (json.type === 'success') {
-              dispatch(initJokes(json.value.map((item: { id: number; joke: string }) => ({ id: item.id, text: item.joke }))))
-            } else {
-              alert(`Server: ${json.type}`)
-            }
-          },
-          (error) => {
-            alert(error)
-          }
-        )
+      fetchHelper(TEN_RANDOM_JOKES_URL, (json) =>
+        dispatch(initJokes(json.value.map((item: { id: number; joke: string }) => ({ id: item.id, text: item.joke }))))
+      )
     }
   }, [])
 
